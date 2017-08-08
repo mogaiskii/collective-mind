@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Collective mind</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+
+        <!-- authorised -->
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">CM</a>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#">Post</a></li>
+                    <li><a href="#"><i class="glyphicon glyphicon-user"></i><Profile</a></li>
+                </ul>
+            </div>
+        </nav>
+        
+        <!-- not authorised -->
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">CM</a>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#">Login</a></li>
+                    <li><a href="#">Register</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="title jumbotron">
+            <h1>Collective Mind </h1>
+            <h2>блоговая система</h2>
+        </div>
+
+        <div class="main">
+            <div class="container">
+                <%= content =%>
+            </div>
+        </div>
+
+        <footer>
+            <div class="container-fluid">
+                <p class="text-center">
+                    Collective mind<i class="glyphicon glyphicon-copyright-mark"></i> 2017
+                </p>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- TODO: delete this -->
+    <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+</body>
+</html>
