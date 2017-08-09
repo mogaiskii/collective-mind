@@ -1,0 +1,23 @@
+{
+  "name": "collective-mind",
+  "version": "1.0.0",
+  "description": "collective blog system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mogaiskii/collective-mind.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mogaiskii/collective-mind/issues"
+  },
+  "homepage": "https://github.com/mogaiskii/collective-mind#readme",
+  "dependencies": {
+    "ejs": "^2.5.7",
+    "express": "^4.15.4"
+  }
+}
