@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Collective mind |(Создание/Редактирование) поста</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">CM</a>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#">Login</a></li>
+                    <li><a href="#">Register</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="title jumbotron">
+            <h1>Collective Mind </h1>
+            <h2>блоговая система</h2>
+        </div>
+
+        <div class="main">
+
+            <form action="" class="form-horizontal">
+
+              <div class="errmessage alert alert-danger" role="alert">
+                  <strong>Ошибка (создания/изменения)!</strong> Описание ошибки
+              </div>
+
+                <div class="form-group">
+                    <label for="title-input" class="control-label col-sm-3">Заголовок*</label>
+                    <div class="col-sm-4">
+                        <input id="title-input" class="form-control" type="text" placeholder="Заголовок" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="preview-input" class="control-label col-sm-3">Описание*</label>
+                    <div class="col-sm-5">
+                        <textarea class="form-control" rows="3" placeholder="Описание" required></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="text-input" class="control-label col-sm-3">Текст</label>
+                    <div class="col-sm-5">
+                        <textarea class="form-control" rows="8" placeholder="Текст" required></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-2">
+                        <input type="submit" value="Отправить" class="form-control btn btn-primary">
+                    </div>
+                </div>
+            </form>
+
+
+        </div>
+
+        <footer>
+          <hr>
+            <div class="container-fluid">
+                <p>
+                    Collective mind<i class="glyphicon glyphicon-copyright-mark"></i> 2017
+                </p>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- TODO: delete this -->
+    <script src="http://localhost:35729/livereload.js" charset="utf-8"></script>
+</body>
+</html>
