@@ -14,7 +14,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 app.get('/', async function(req,res){
-  res.render('home')
+  var data = {}
+  var last_page = 1 //TODO: debug
+  data.user = false //TODO: debug
+  data.posts = []
+  data.page = {"title":"Главная","current":1,"last":last_page}
+  res.render('home',data)
   //var last_page = DB.get(count posts) / 10 , +1, if дробь
   //var author = DB.get(select * from users where id= post.author)
    //{"page":{"title":"Главная", "current":1,"last":last_page},"posts":
@@ -23,7 +28,15 @@ app.get('/', async function(req,res){
 })
 
 app.get('/page/:page', async function(req,res){
-  res.render('home')
+  var data = {}
+  var last_page = 1 //TODO: debug
+  if ( req.params.page>last_page ){
+    res.redirect('/page/'+last_page)
+  }
+  data.user = false //TODO: debug
+  data.posts = []
+  data.page = {"title":"Главная","current":req.params.page,"last":last_page}
+  res.render('home',data)
   //var last_page = DB.get(count posts) / 10 , +1, if дробь
   //var author = DB.get(select * from users where id= post.author)
    //{"page":{"title":"Главная", "current":req.params.page,"last":last_page},"posts":
@@ -32,47 +45,50 @@ app.get('/page/:page', async function(req,res){
 })
 
 app.get('/register', async function(req,res){
+  var data = {}
+  data.page = {"title":"Регистрация"}
+  data.user = false
+  data.errors = []
   //if (authorised) res.redirect('/')
-  res.render('register')
-  //{"page":{"title":"Регистрация"}}
+  res.render('register', data)
 })
 
 app.post('/register', async function(req,res){
   //if (authorised) res.redirect('/')
   //checks FORM, if incorrect:
-  res.render('register')
-  //{"errors":[{"title":"Название ошибки", "message":"Описание ошибки"}],
-  //"form":{"email":req.body.email,
-   //  "name":req.body.name,"password":req.body.password,
-   //  "passwordagain":req.body.passwordagain},
- //"page"{"title":"Регистрация"}}
+  var data = {}
+  data.errors = [{"title":"Ошибка","message":"Описание"}]
+  data.users = false
+  data.page = {"title":"Регистрация"}
+  res.render('register',data)
 })
 
 app.get('/auth', async function(req,res){
   //if (authorised) res.redirect('/')
-  res.render('auth')
-  //{"page"{"title":"Регистрация"}}
+  var data = {}
+  data.errors = []
+  data.user = false//TODO: debug
+  data.page = {"title":"Вход"}
+  res.render('auth', {"page":{"title":"Вход"}, "user":false, "errors":[]})
 })
 
 app.post('/auth', async function(req,res){
   //if (authorised) res.redirect('/')
   //checks FORM, if incorrect:
+  var data = {}
+  data.errors = [{"title":"Ошибка","message":"Описание"}]
+  data.user = false//TODO: debug
+  data.page = {"title":"Вход"}
   res.render('auth')
-  //{"errors":[{"title":"Название ошибки", "message":"Описание ошибки"}]
-  //"form":{"email":req.body.email},
-  // "page":"Вход"}
-})
-
-app.get('/post/:id', async function(req,res){
-  //var post = DB(select * from posts where id= req.params.id)
-  res.render('details')
-  //{"page":post.title,"post":post}
 })
 
 app.get('/post/new', async function(req,res){
   //if (!auth) res.redirect('/auth')
-  res.render('post')
-  //{"page":{"title":"Новый пост"}}
+  var data = {}
+  data.errors = []
+  data.user = true//TODO: debug
+  data.page = {"title":"Новый пост"}
+  res.render('post',data)
 })
 
 app.post('/post/new', async function(req,res){
@@ -81,16 +97,30 @@ app.post('/post/new', async function(req,res){
   // values (req.body.title,req.body.preview, req.body.text))
   // res.redirect('/post/'+id)
   //else (sth wrong)
-  res.render('post')
-  //{"page":{"title":"Новый пост"}, "form":{"title":req.body.title,
-  //  "preview":req.body.preview,"text":req.body.text}}
+  var data = {}
+  data.errors = [{"title":"Ошибка","message":"Описание"}]
+  data.user = true//TODO: debug
+  data.page = {"title":"Новый пост"}
+  res.render('post',data)
+})
+
+app.get('/post/:id', async function(req,res){
+  //var post = DB(select * from posts where id= req.params.id)
+  var data = {}
+  data.user = false //TODO: debug
+  data.post = {"title":"Заголовок", "preview":"Описание","text":"Текст поста","author":
+    {"id":1,"name":"Автор"}}//TODO:debug
+  data.page = {"title":data.post.title}
+  res.render('details',data)
 })
 
 app.get('/post/:id/edit', async function(req,res){
   //if (!auth) res.redirect('/auth')
+  var data = {}
+  data.errors = [{"title":"Ошибка","message":"Описание"}]
+  data.user = true//TODO: debug
+  data.page = {"title":"Редактирование"}
   res.render('post')
-  //{"page":{"title":"Редактирование"}, "form":{"title":req.body.title,
-  //  "preview":req.body.preview,"text":req.body.text}}
 })
 
 app.put('/post/:id', async function(req,res){
@@ -99,15 +129,21 @@ app.put('/post/:id', async function(req,res){
   // values (req.body.title,req.body.preview, req.body.text))
   // res.redirect('/post/'+id)
   //else (sth wrong)
-  res.send('edit post#'req.params.id' PUT')
-  //{"page":{"title":"Новый пост"}, "form":{"title":req.body.title,
-  //  "preview":req.body.preview,"text":req.body.text}}
+  var data = {}
+  data.errors = [{"title":"Ошибка","message":"Описание"}]
+  data.user = true//TODO: debug
+  data.page = {"title":"Редактирование"}
+  res.render('post',data)
 })
 
 app.get('/author/:id', async function(req,res){
   //var user = DB(select * from users where id= req.params.id)
   //var posts = DB(select * from posts where author = user)
-  res.render('author')
+  var data = {}
+  data.user = {"id":1,"name":"Автор"}//TODO: debug
+  data.posts = [{"id":1,"title":"Заголовок","preview":"Описание"}]
+  data.page = {"title":"Вход"}
+  res.render('author',data)
   // {"page":{"title":user.name}, "user":user, "posts":posts}
 })
 

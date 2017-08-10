@@ -23,14 +23,14 @@
 
 <nav class="text-center">
     <ul class="pagination">
-        <% if ( page.current-1>0 ){ %>
+        <% if(page.current - 1 > 0){ %>
         <li><a href="/page/<%= page.current-1 %>">Previous</a></li>
         <li><a href="/page/<%= page.current-1 %>"> <%= page.current-1 %> </a></li>
         <% } %>
         <li class="active"><a href="#"> <%= page.current %> </a></li>
-        <%= if ( page.current != page.last ){ %>
-        <li><a href="/page/<%= page.current+1 %>"><%= page.current+1 %></a></li>
-        <li><a href="/page/<%= page.current+1 %>">Next</a></li>
+        <% if(page.current != page.last){ %>
+        <li><a href="/page/<%= page.current-1+2 %>"><%= page.current-1+2 %></a></li>
+        <li><a href="/page/<%= page.current-1+2 %>">Next</a></li>
         <% } %>
     </ul>
 </nav>

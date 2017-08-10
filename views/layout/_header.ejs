@@ -12,11 +12,11 @@
         <!-- authorised -->
         <nav class="navbar navbar-default">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">CM</a>
+                <a class="navbar-brand" href="/">CM</a>
 
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#">Post</a></li>
-                    <li><a href="#"><i class="glyphicon glyphicon-user"></i>Profile</a></li>
+                    <li><a href="/post/new">Post</a></li>
+                    <li><a href="/author/<%= user.id %>"><i class="glyphicon glyphicon-user"></i>Profile</a></li>
                 </ul>
             </div>
         </nav>
@@ -24,11 +24,11 @@
         <!-- not authorised -->
         <nav class="navbar navbar-default">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">CM</a>
+                <a class="navbar-brand" href="/">CM</a>
 
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#">Login</a></li>
-                    <li><a href="#">Register</a></li>
+                    <li><a href="/auth">Login</a></li>
+                    <li><a href="/register">Register</a></li>
                 </ul>
             </div>
         </nav>
