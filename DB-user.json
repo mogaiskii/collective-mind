@@ -1,7 +1,7 @@
 {
-  "id":1,
-  "name":"username",
-  "password":"password",
-  "email":"email",
-  "admin":false
+  "id":"integer primary",
+  "name":"varchar",
+  "password":"varchar",
+  "email":"varchar",
+  "admin":"boolean"
 }

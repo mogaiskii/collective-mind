@@ -1,7 +1,7 @@
 {
-  "id":1,
-  "title":"Title",
-  "preview":"Preview",
-  "text":"Text",
-  "author":"author"
+  "id":"integer primary",
+  "title":"varchar",
+  "preview":"text",
+  "text":"text",
+  "author":"foreign key"
 }
