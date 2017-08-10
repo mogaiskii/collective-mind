@@ -1,0 +1,39 @@
+<%- include('layout/_header') %>
+
+
+
+<% posts.forEach(function(post){ %>
+<div class="post">
+    <div class="post-header">
+        <h3> <%= post.title %> </h3>
+        <p>Опубликовал: <a href="#" class="label label-info"> <%= post.author.name %> </a></p>
+    </div>
+    <div class="post-body">
+        <div class="preview">
+            <p> <%= post.preview %> </p>
+        </div>
+    </div>
+    <div class="post-footer">
+        <a href="/post/<%= post.id %>" class="btn btn-default">Подробнее</a>
+    </div>
+</div>
+<% }) %>
+
+
+
+<nav class="text-center">
+    <ul class="pagination">
+        <% if ( page.current-1>0 ){ %>
+        <li><a href="/page/<%= page.current-1 %>">Previous</a></li>
+        <li><a href="/page/<%= page.current-1 %>"> <%= page.current-1 %> </a></li>
+        <% } %>
+        <li class="active"><a href="#"> <%= page.current %> </a></li>
+        <%= if ( page.current != page.last ){ %>
+        <li><a href="/page/<%= page.current+1 %>"><%= page.current+1 %></a></li>
+        <li><a href="/page/<%= page.current+1 %>">Next</a></li>
+        <% } %>
+    </ul>
+</nav>
+
+
+<%- include('layout/_footer') %>

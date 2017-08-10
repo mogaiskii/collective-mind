@@ -1,0 +1,28 @@
+<%- include('layout/_header') %>
+
+
+<div class="post">
+    <div class="post-header">
+        <h3> <%= post.title %> </h3>
+        <p>
+            Опубликовал: <a href="#" class="label label-info"> <%= post.author.name %> </a>
+            <% if( user && user===post.author ){ %>
+            <span class="tools">
+                    <a href="#"><i class="glyphicon glyphicon-pencil"></i></a>
+                    <a href="#"><i class="glyphicon glyphicon-remove"></i></a>
+            </span>
+            <% } %>
+        </p>
+    </div>
+    <div class="post-body">
+        <div class="preview">
+            <p> <%= post.preview %> </p>
+        </div>
+        <hr>
+        <div class="post-text">
+            <%= post.text %>
+        </div>
+    </div>
+</div>
+
+<%- include('layout/_footer') %>

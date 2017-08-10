@@ -1,0 +1,45 @@
+<%- include('layout/_header') %>
+
+
+<form action="" class="form-horizontal">
+
+  <% errors.forEach(function(error){ %>
+  <div class="errmessage alert alert-danger" role="alert">
+      <strong><%= error.title %></strong> %= error.message %>
+  </div>
+  <% }) %>
+
+    <div class="form-group">
+        <label for="title-input" class="control-label col-sm-3">Заголовок*</label>
+        <div class="col-sm-4">
+            <input name="title" value="<%= form.title %>" id="title-input" class="form-control" type="text" placeholder="Заголовок" required>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="preview-input" class="control-label col-sm-3">Описание*</label>
+        <div class="col-sm-5">
+            <textarea name="preview" class="form-control" rows="3" placeholder="Описание" required>
+              <%= form.preview %>
+            </textarea>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="text-input" class="control-label col-sm-3">Текст</label>
+        <div class="col-sm-5">
+            <textarea name="text" class="form-control" rows="8" placeholder="Текст">
+              <%= form.text %>
+            </textarea>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-2">
+            <input type="submit" value="Отправить" class="form-control btn btn-primary">
+        </div>
+    </div>
+</form>
+
+
+<%- include('layout/_footer') %>

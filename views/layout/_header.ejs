@@ -2,12 +2,13 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Collective mind |<%= page_name =%></title>
+    <title>Collective mind |<%= page.title %></title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body>
     <div class="container">
 
+        <% if ( user ){  %>
         <!-- authorised -->
         <nav class="navbar navbar-default">
             <div class="container-fluid">
@@ -19,7 +20,7 @@
                 </ul>
             </div>
         </nav>
-
+        <% }else{  %>
         <!-- not authorised -->
         <nav class="navbar navbar-default">
             <div class="container-fluid">
@@ -31,6 +32,7 @@
                 </ul>
             </div>
         </nav>
+        <% } %>
 
         <div class="title jumbotron">
             <h1>Collective Mind </h1>
@@ -38,23 +40,3 @@
         </div>
 
         <div class="main">
-
-            <%= content =%>
-
-        </div>
-
-        <footer>
-          <hr>
-            <div class="container-fluid">
-                <p>
-                    Collective mind<i class="glyphicon glyphicon-copyright-mark"></i> 2017
-                </p>
-            </div>
-        </footer>
-
-    </div>
-
-    <!-- TODO: delete this -->
-    <script src="http://localhost:35729/livereload.js" charset="utf-8"></script>
-</body>
-</html>
