@@ -7,6 +7,7 @@
     <div class="post-header">
         <h3> <%= post.title %> </h3>
         <p>Опубликовал: <a href="#" class="label label-info"> <%= post.author.name %> </a></p>
+        <p><%= post.date.toLocaleDateString({year:"numeric",month:"numeric",day:"numeric"}) %></p>
     </div>
     <div class="post-body">
         <div class="preview">
@@ -29,7 +30,7 @@
         <% } %>
         <li class="active"><a href="#"> <%= page.current %> </a></li>
         <% if(page.current != page.last){ %>
-        <li><a href="/page/<%= page.current-1+2 %>"><%= page.current-1+2 %></a></li>
+        <li><a href="/page/<%= page.current-1+2 %>"><%= page.current-0+1 %></a></li>
         <li><a href="/page/<%= page.current-1+2 %>">Next</a></li>
         <% } %>
     </ul>

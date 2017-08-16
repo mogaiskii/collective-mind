@@ -108,7 +108,8 @@ app.get('/post/:id', async function(req,res){
   //var post = DB(select * from posts where id= req.params.id)
   var data = {}
   data.user = false //TODO: debug
-  data.post = {'title':'Заголовок', 'preview':'Описание','text':'Текст поста','author':
+  var date = new Date() //TODO: debug . from timestamp
+  data.post = {'title':'Заголовок', 'preview':'Описание','text':'Текст поста','date':date,'author':
     {'id':1,'name':'Автор'}}//TODO:debug
   data.page = {'title':data.post.title}
   res.render('details',data)
