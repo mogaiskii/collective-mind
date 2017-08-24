@@ -2,6 +2,7 @@ var express = require('express')
   , app = express()
   , port = process.env.PORT || 3000
   , bodyParser = require('body-parser')
+  , models = require('./models/index.js')
 
 
 // ejs settings
@@ -58,7 +59,7 @@ app.post('/register', async function(req,res){
   //checks FORM, if incorrect:
   var data = {}
   data.errors = [{'title':'Ошибка','message':'Описание'}]
-  data.users = false
+  data.user = false
   data.page = {'title':'Регистрация'}
   res.render('register',data)
 })
@@ -148,6 +149,14 @@ app.get('/author/:id', async function(req,res){
   // {"page":{"title":user.name}, "user":user, "posts":posts}
 })
 
-app.listen(port, async function(){
-  console.log('Started at port #',port)
-})
+models.sequelize
+  .authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.')
+    app.listen(port, async function(){
+      console.log('Started at port #',port)
+    })
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err)
+  })
