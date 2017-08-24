@@ -25,14 +25,14 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      userid:{
+      userId:{
         allowNull:false,
         type: Sequelize.INTEGER,
         references:{
-          model:'User',
+          model:'user',
           key:'id'
         }
-      }
+      },
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
