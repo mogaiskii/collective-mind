@@ -5,19 +5,21 @@ module.exports = function(sequelize, DataTypes) {
     title: { type:DataTypes.STRING, allowNull:false },
     preview: { type:DataTypes.STRING, allowNull:false },
     text: { type:DataTypes.STRING, allowNull:false },
-    date: { type:DataTypes.DATE, defaultValue: DataTypes.NOW, allowNull:false },
-    author: {
-      type: DataTypes.INTEGER,
-      references:{
-        model: User,
-        key: 'id',
-        deferrable: DataTypes.Deferrable.INITIALLY_IMMEDIATE
-      }
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE
     }
   }, {
     classMethods: {
       associate: function(models) {
         // associations can be defined here
+        Post.belongsTo(models.User, {
+          foreignKey: { allowNull:false }
+        })
       }
     }
   })

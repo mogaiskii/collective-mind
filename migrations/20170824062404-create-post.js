@@ -5,20 +5,21 @@ module.exports = {
       id: {
         allowNull: false,
         autoIncrement: true,
+        unique: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
       title: {
+        allowNull:false,
         type: Sequelize.STRING
       },
       preview: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       text: {
+        allowNull: false,
         type: Sequelize.STRING
-      },
-      date: {
-        type: Sequelize.DATE
       },
       createdAt: {
         allowNull: false,

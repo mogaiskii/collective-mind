@@ -5,11 +5,12 @@ module.exports = function(sequelize, DataTypes) {
     name: { type:DataTypes.STRING, allowNull:false },
     email: { type:DataTypes.STRING, allowNull:false, unique:true },
     encryptedPassword: { type:DataTypes.STRING, allowNull:false },
-    isAdmin: { type:DataTypes.BOOLEAN, allowNull:false }
+    isAdmin: { type:DataTypes.BOOLEAN }
   }, {
     classMethods: {
       associate: function(models) {
         // associations can be defined here
+        User.hasMany(models.Post)
       }
     }
   })
