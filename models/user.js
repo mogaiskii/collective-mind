@@ -1,4 +1,5 @@
 'use strict'
+var bcrypt = require('bcrypt')
 module.exports = function(sequelize, DataTypes) {
   var user = sequelize.define('user', {
     id: { type:DataTypes.INTEGER, primaryKey:true, autoIncrement:true, unique:true, allowNull:false },
@@ -7,6 +8,12 @@ module.exports = function(sequelize, DataTypes) {
     encryptedPassword: { type:DataTypes.STRING, allowNull:false },
     isAdmin: { type:DataTypes.BOOLEAN }
   }, {
+    setterMethods:{
+      password: async function(val){
+        var hash = await bcrypt.hash(val)
+        this.setDataValue('encryptedPassword', hash)
+      }
+    },
     classMethods: {
       associate: function(models) {
         // associations can be defined here
@@ -14,5 +21,9 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   })
+  user.prototype.comparePassword = async function (password) {
+    var result = await bcrypt.compare(password, this.encryptedPassword)
+    return result
+  }
   return user
 }
