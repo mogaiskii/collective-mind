@@ -3,6 +3,7 @@ var express = require('express')
   , port = process.env.PORT || 3000
   , bodyParser = require('body-parser')
   , models = require('./models/index.js')
+  , Joi = require('joi')
 
 
 // ejs settings
@@ -54,14 +55,61 @@ app.get('/register', async function(req,res){
   res.render('register', data)
 })
 
-app.post('/register', async function(req,res){
+app.post('/', async function(req,res){
   //if (authorised) res.redirect('/')
   //checks FORM, if incorrect:
-  var data = {}
-  data.errors = [{'title':'Ошибка','message':'Описание'}]
-  data.user = false
-  data.page = {'title':'Регистрация'}
-  res.render('register',data)
+  var schema = Joi.object().keys({
+    name: Joi.string().max(200).required().label('ФИО'),
+    email: Joi.string().email().max(200).required().label('email'),
+    password: Joi.string().min(8).max(200).required().label('Пароль'),
+    passwordagain: Joi.any().valid(Joi.ref('password')).required().options({ language: { any: { allowOnly: 'Пароли должны совпадать' }} }).label('Повтор пароля')
+  })
+  var reqData = {
+    name:req.body.name,
+    email: req.body.email,
+    password: req.body.password,
+    passwordagain: req.body.passwordagain,
+
+  }
+  var joiOptions = {
+    abortEarly:false,
+    language: {
+      key: '"{{key}}": ',
+      any:{
+        required: 'Необходимо заполнить',
+        empty: 'Должно быть заполнено'
+      },
+      string:{
+        email: 'Введите настоящий адрес электронной почты',
+        min: 'Длина должна быть более {{limit}} символов',
+        max: 'Длина не может превышать {{limit}} символов'
+      }
+    }
+  }
+  var result = Joi.validate(reqData,schema, joiOptions)
+  if(reqData.email){
+    var suchEmail = models.user.findOne({ where: {email:reqData.email} })
+  }
+  if(!result.error && !suchEmail){
+    res.redirect('/')
+  }else{
+    var data = {}
+    data.errors = []
+    if(suchEmail){
+      data.errors.push({'title':'email','message':'Уже занят'})
+    }
+    data.user = false
+    data.page = {'title':'Регистрация'}
+    for(let err of result.error.details){
+      var delInd = err.message.indexOf('": ')+3
+      data.errors.push({
+        'title':err.message.slice(0,delInd),
+        'message':err.message.slice(delInd)
+      })
+    }
+    res.render('register',data)
+  }
+
 })
 
 app.get('/auth', async function(req,res){

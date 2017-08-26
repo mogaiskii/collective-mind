@@ -9,8 +9,8 @@ module.exports = function(sequelize, DataTypes) {
     isAdmin: { type:DataTypes.BOOLEAN }
   }, {
     setterMethods:{
-      password: async function(val){
-        var hash = await bcrypt.hash(val)
+      password: function(val){
+        var hash = bcrypt.hashSync(val)
         this.setDataValue('encryptedPassword', hash)
       }
     },
@@ -21,8 +21,8 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   })
-  user.prototype.comparePassword = async function (password) {
-    var result = await bcrypt.compare(password, this.encryptedPassword)
+  user.prototype.comparePassword = function (password) {
+    var result = bcrypt.compareSync(password, this.encryptedPassword)
     return result
   }
   return user
