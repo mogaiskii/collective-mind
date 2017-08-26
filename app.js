@@ -55,7 +55,7 @@ app.get('/register', async function(req,res){
   res.render('register', data)
 })
 
-app.post('/', async function(req,res){
+app.post('/register', async function(req,res){
   //if (authorised) res.redirect('/')
   //checks FORM, if incorrect:
   var schema = Joi.object().keys({
@@ -88,7 +88,8 @@ app.post('/', async function(req,res){
   }
   var result = Joi.validate(reqData,schema, joiOptions)
   if(reqData.email){
-    var suchEmail = models.user.findOne({ where: {email:reqData.email} })
+    var suchEmail = await models.user.findOne({ where: {email:reqData.email} })
+    console.log(suchEmail)
   }
   if(!result.error && !suchEmail){
     res.redirect('/')
