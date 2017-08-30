@@ -102,7 +102,7 @@ app.post('/register', async function(req,res){
   // if sth wrong
   if(result.error || suchEmail){
     //data for rendering
-    var data = {}
+    let data = {}
     data.user = false
     data.page = {'title':'Регистрация'}
     data.errors = []
@@ -111,7 +111,7 @@ app.post('/register', async function(req,res){
     }
     if(result.error){
       for(let err of result.error.details){
-        var delInd = err.message.indexOf('": ')+3
+        let delInd = err.message.indexOf('": ')+3
         data.errors.push({
           'title':err.message.slice(0,delInd),
           'message':err.message.slice(delInd)
@@ -127,12 +127,20 @@ app.post('/register', async function(req,res){
     newUser.password = reqData.password
     //trying save model instance
     try {
-      newUser.save().then(() => {
-        // if OK
-        res.redirect('/')
-      }).catch((err)=>{console.log(err)})
+      // newUser.save().then(() => {
+      //   // if OK
+      //   res.redirect('/')
+      // }).catch((err)=>{console.log(err)})
+      await newUser.save()
+      res.redirect('/')
     }catch(err){
       console.log(err)
+      let data = {}
+      data.user = false
+      data.page = {'title':'Регистрация'}
+      data.errors = []
+      data.errors.push({'title':'Неизвестная ошибка','message':''})
+      res.render('register',data)
     }
   }
 
