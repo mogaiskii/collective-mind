@@ -10,7 +10,8 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     setterMethods:{
       password: function(val){
-        var hash = bcrypt.hashSync(val)
+        var salt = bcrypt.genSaltSync(10)
+        var hash = bcrypt.hashSync(val, salt)
         this.setDataValue('encryptedPassword', hash)
       }
     },

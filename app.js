@@ -57,13 +57,19 @@ app.get('/register', async function(req,res){
 
 app.post('/register', async function(req,res){
   //if (authorised) res.redirect('/')
-  //checks FORM, if incorrect:
+
+  // validating schema
   var schema = Joi.object().keys({
+    //name(ФИО): string, length <= 200 (due DB varchar), required
     name: Joi.string().max(200).required().label('ФИО'),
+    //email(email): string, valid email, length<=200(due DB), required
     email: Joi.string().email().max(200).required().label('email'),
+    //password(Пароль): string, 8<=length(more secure), length<=200(due DB), required
     password: Joi.string().min(8).max(200).required().label('Пароль'),
+    //passwordagain(Повтор пароля), should be same as password
     passwordagain: Joi.any().valid(Joi.ref('password')).required().options({ language: { any: { allowOnly: 'Пароли должны совпадать' }} }).label('Повтор пароля')
   })
+  // data from request
   var reqData = {
     name:req.body.name,
     email: req.body.email,
@@ -71,9 +77,10 @@ app.post('/register', async function(req,res){
     passwordagain: req.body.passwordagain,
 
   }
+  // config for schema
   var joiOptions = {
-    abortEarly:false,
-    language: {
+    abortEarly:false, //continue validating after 1st error
+    language: { //error messages settings
       key: '"{{key}}": ',
       any:{
         required: 'Необходимо заполнить',
@@ -86,29 +93,47 @@ app.post('/register', async function(req,res){
       }
     }
   }
+  // validating
   var result = Joi.validate(reqData,schema, joiOptions)
+  // check email for availableness
   if(reqData.email){
     var suchEmail = await models.user.findOne({ where: {email:reqData.email} })
-    console.log(suchEmail)
   }
-  if(!result.error && !suchEmail){
-    res.redirect('/')
-  }else{
+  // if sth wrong
+  if(result.error || suchEmail){
+    //data for rendering
     var data = {}
+    data.user = false
+    data.page = {'title':'Регистрация'}
     data.errors = []
     if(suchEmail){
       data.errors.push({'title':'email','message':'Уже занят'})
     }
-    data.user = false
-    data.page = {'title':'Регистрация'}
-    for(let err of result.error.details){
-      var delInd = err.message.indexOf('": ')+3
-      data.errors.push({
-        'title':err.message.slice(0,delInd),
-        'message':err.message.slice(delInd)
-      })
+    if(result.error){
+      for(let err of result.error.details){
+        var delInd = err.message.indexOf('": ')+3
+        data.errors.push({
+          'title':err.message.slice(0,delInd),
+          'message':err.message.slice(delInd)
+        })
+      }
     }
     res.render('register',data)
+
+  }else{ // if everything is OK
+    //make new user model instance (not saving)
+    var newUser = models.user.build({name: reqData.name,  email: reqData.email},{fields:['name','email']})
+    //adding password with setter
+    newUser.password = reqData.password
+    //trying save model instance
+    try {
+      newUser.save().then(() => {
+        // if OK
+        res.redirect('/')
+      }).catch((err)=>{console.log(err)})
+    }catch(err){
+      console.log(err)
+    }
   }
 
 })
