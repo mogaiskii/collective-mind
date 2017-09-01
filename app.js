@@ -4,6 +4,9 @@ var express = require('express')
   , bodyParser = require('body-parser')
   , models = require('./models/index.js')
   , Joi = require('joi')
+  , passport = require('passport')
+  , LocalStrategy = require('passport-local').Strategy
+  , session = require('express-session')
 
 
 // ejs settings
@@ -13,6 +16,35 @@ app.set('view engine', 'ejs')
 // express settings
 //app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
+
+// passport settings
+app.use(session({
+  secret: 'secretSTRING123$%s'
+}))
+app.use(passport.initialize())
+app.use(passport.session())
+
+// local strategy
+passport.use(new LocalStrategy({
+  usernameField: 'email',
+  passwordField: 'password',
+},
+async function(email, password, done){
+  let curUser = await models.user.findOne({where: {email: email} })
+  if (!curUser) return done(null, false)
+  if (!curUser.comparePassword(password)) return done(null, false)
+  return done(null, curUser)
+}
+))
+
+passport.serializeUser(function(user, done) {
+  done(null, user)
+})
+
+passport.deserializeUser(function(user, done) {
+  done(null, user)
+})
+
 
 
 app.get('/', async function (req,res){
@@ -47,6 +79,8 @@ app.get('/page/:page', async function(req,res){
 })
 
 app.get('/register', async function(req,res){
+  if( req.isAuthenticated() ) return res.redirect('/')
+
   var data = {}
   data.page = {'title':'Регистрация'}
   data.user = false
@@ -57,6 +91,7 @@ app.get('/register', async function(req,res){
 
 app.post('/register', async function(req,res){
   //if (authorised) res.redirect('/')
+  if( req.isAuthenticated() ) return res.redirect('/')
 
   // validating schema
   var schema = Joi.object().keys({
@@ -121,17 +156,16 @@ app.post('/register', async function(req,res){
     res.render('register',data)
 
   }else{ // if everything is OK
-    //make new user model instance (not saving)
-    var newUser = models.user.build({name: reqData.name,  email: reqData.email},{fields:['name','email']})
-    //adding password with setter
-    newUser.password = reqData.password
-    //trying save model instance
+
+    //trying make model instance
     try {
-      // newUser.save().then(() => {
-      //   // if OK
-      //   res.redirect('/')
-      // }).catch((err)=>{console.log(err)})
-      await newUser.save()
+      //make new user model instance
+      await models.user.create({
+        name: reqData.name,
+        email: reqData.email,
+        password: reqData.password
+      })
+
       res.redirect('/')
     }catch(err){
       console.log(err)
@@ -148,6 +182,8 @@ app.post('/register', async function(req,res){
 
 app.get('/auth', async function(req,res){
   //if (authorised) res.redirect('/')
+  if( req.isAuthenticated() ) return res.redirect('/')
+
   var data = {}
   data.errors = []
   data.user = false//TODO: debug
@@ -155,18 +191,42 @@ app.get('/auth', async function(req,res){
   res.render('auth', {'page':{'title':'Вход'}, 'user':false, 'errors':[]})
 })
 
-app.post('/auth', async function(req,res){
-  //if (authorised) res.redirect('/')
+app.post('/auth', async function(req,res,next){
+  if( req.isAuthenticated() ) return res.redirect('/')
+
   //checks FORM, if incorrect:
   var data = {}
-  data.errors = [{'title':'Ошибка','message':'Описание'}]
+  data.errors = []
   data.user = false//TODO: debug
   data.page = {'title':'Вход'}
-  res.render('auth')
+  return passport.authenticate('local',
+    //{successRedirect:'/', failureRedirect:'/auth'},
+    function(err,user,info){
+      if(err) return next(err)
+      if(!user){
+        data.errors.push({'title':'Неверная комбинация логин/пароль', 'message':''})
+        return res.render('auth',data)
+      }
+      req.login(user, function(err){
+        if(err) return next(err)
+        return res.redirect('/')
+      })
+    }
+  )(req,res,next)
+
+
+  //return res.redirect('/')
+})
+
+app.get('/logout', async function(req,res){
+  req.logout()
+  res.redirect('/')
 })
 
 app.get('/post/new', async function(req,res){
-  //if (!auth) res.redirect('/auth')
+
+  if( !req.isAuthenticated() ) return res.redirect('/auth')
+
   var data = {}
   data.errors = []
   data.user = true//TODO: debug
@@ -175,6 +235,7 @@ app.get('/post/new', async function(req,res){
 })
 
 app.post('/post/new', async function(req,res){
+  if( !req.isAuthenticated() ) return res.redirect('/auth')
   //if (!auth) res.redirect('/auth')
   //else if( all ok) DB(insert into posts (title, preview, text)
   // values (req.body.title,req.body.preview, req.body.text))
@@ -199,6 +260,7 @@ app.get('/post/:id', async function(req,res){
 })
 
 app.get('/post/:id/edit', async function(req,res){
+  if( !req.isAuthenticated() ) return res.redirect('/auth')
   //if (!auth) res.redirect('/auth')
   var data = {}
   data.errors = [{'title':'Ошибка','message':'Описание'}]
@@ -208,6 +270,7 @@ app.get('/post/:id/edit', async function(req,res){
 })
 
 app.put('/post/:id', async function(req,res){
+  if( !req.isAuthenticated() ) return res.redirect('/auth')
   //if (!auth) res.redirect('/auth')
   //else if( all ok) DB(insert into posts (title, preview, text)
   // values (req.body.title,req.body.preview, req.body.text))
