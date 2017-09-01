@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 // passport settings
 app.use(session({
-  secret: 'secretSTRING123$%s'
+  secret: process.env.SECRET
 }))
 app.use(passport.initialize())
 app.use(passport.session())
@@ -38,10 +38,11 @@ async function(email, password, done){
 ))
 
 passport.serializeUser(function(user, done) {
-  done(null, user)
+  done(null, user.id)
 })
 
-passport.deserializeUser(function(user, done) {
+passport.deserializeUser(async function(id, done) {
+  let user = await models.user.findById(id)
   done(null, user)
 })
 
