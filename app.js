@@ -50,7 +50,7 @@ passport.deserializeUser(function(user, done) {
 app.get('/', async function (req,res){
   var data = {}
   var last_page = 1 //TODO: debug
-  data.user = false //TODO: debug
+  data.user = req.user
   data.posts = []
   data.page = {'title':'Главная','current':1,'last':last_page}
   res.render('home',data)
@@ -67,7 +67,7 @@ app.get('/page/:page', async function(req,res){
   if ( req.params.page>last_page ){
     res.redirect('/page/'+last_page)
   }
-  data.user = false //TODO: debug
+  data.user = req.user
   data.posts = []
   data.page = {'title':'Главная','current':req.params.page,'last':last_page}
   res.render('home',data)
@@ -192,30 +192,34 @@ app.get('/auth', async function(req,res){
 })
 
 app.post('/auth', async function(req,res,next){
+  // authorised users not allowed
   if( req.isAuthenticated() ) return res.redirect('/')
 
-  //checks FORM, if incorrect:
-  var data = {}
-  data.errors = []
-  data.user = false//TODO: debug
-  data.page = {'title':'Вход'}
+  // auth process
   return passport.authenticate('local',
-    //{successRedirect:'/', failureRedirect:'/auth'},
-    function(err,user,info){
+    // authorisation function
+    function(err,user){
+      // server error
       if(err) return next(err)
+      // client error
       if(!user){
+        var data = {}
+        data.errors = []
+        data.user = false // becouse user is not auth.ed actually
+        data.page = {'title':'Вход'}
         data.errors.push({'title':'Неверная комбинация логин/пароль', 'message':''})
         return res.render('auth',data)
       }
+      // OK -> login
       req.login(user, function(err){
+        // if server error
         if(err) return next(err)
+        // ok -> redirect
         return res.redirect('/')
       })
     }
   )(req,res,next)
 
-
-  //return res.redirect('/')
 })
 
 app.get('/logout', async function(req,res){
@@ -229,7 +233,7 @@ app.get('/post/new', async function(req,res){
 
   var data = {}
   data.errors = []
-  data.user = true//TODO: debug
+  data.user = req.user
   data.page = {'title':'Новый пост'}
   res.render('post',data)
 })
@@ -243,7 +247,7 @@ app.post('/post/new', async function(req,res){
   //else (sth wrong)
   var data = {}
   data.errors = [{'title':'Ошибка','message':'Описание'}]
-  data.user = true//TODO: debug
+  data.user = req.user
   data.page = {'title':'Новый пост'}
   res.render('post',data)
 })
@@ -251,7 +255,7 @@ app.post('/post/new', async function(req,res){
 app.get('/post/:id', async function(req,res){
   //var post = DB(select * from posts where id= req.params.id)
   var data = {}
-  data.user = false //TODO: debug
+  data.user = req.user
   var date = new Date() //TODO: debug . from timestamp
   data.post = {'title':'Заголовок', 'preview':'Описание','text':'Текст поста','date':date,'author':
     {'id':1,'name':'Автор'}}//TODO:debug
@@ -264,7 +268,7 @@ app.get('/post/:id/edit', async function(req,res){
   //if (!auth) res.redirect('/auth')
   var data = {}
   data.errors = [{'title':'Ошибка','message':'Описание'}]
-  data.user = true//TODO: debug
+  data.user = req.user
   data.page = {'title':'Редактирование'}
   res.render('post')
 })
@@ -278,7 +282,7 @@ app.put('/post/:id', async function(req,res){
   //else (sth wrong)
   var data = {}
   data.errors = [{'title':'Ошибка','message':'Описание'}]
-  data.user = true//TODO: debug
+  data.user = req.user
   data.page = {'title':'Редактирование'}
   res.render('post',data)
 })
@@ -287,7 +291,8 @@ app.get('/author/:id', async function(req,res){
   //var user = DB(select * from users where id= req.params.id)
   //var posts = DB(select * from posts where author = user)
   var data = {}
-  data.user = {'id':1,'name':'Автор'}//TODO: debug
+  data.user = req.user
+  data.pageUser = {'name':'user'}
   data.posts = [{'id':1,'title':'Заголовок','preview':'Описание'}]
   data.page = {'title':'Вход'}
   res.render('author',data)
