@@ -7,6 +7,7 @@ var express = require('express')
   , passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy
   , session = require('express-session')
+  , sanitize = require('sanitize-html')
 
 
 // ejs settings
@@ -246,11 +247,53 @@ app.post('/post/new', async function(req,res){
   // values (req.body.title,req.body.preview, req.body.text))
   // res.redirect('/post/'+id)
   //else (sth wrong)
-  var data = {}
-  data.errors = [{'title':'Ошибка','message':'Описание'}]
-  data.user = req.user
-  data.page = {'title':'Новый пост'}
-  res.render('post',data)
+  var reqData = {
+    title: req.body.title,
+    preview: req.body.preview,
+    text: req.body.text
+  }
+
+  var sanitizeConfig = {
+    allowedTags: ['p','h1','h2','h3','h4','h5','h6','img','b','i','blockquote','pre','a'],
+    allowedAttributes: {
+      'a': ['href'],
+      'img':['alt','src']
+    }
+  }
+  var cleanData = {
+    title: sanitize(reqData.title,sanitizeConfig),
+    preview: sanitize(reqData.preview,sanitizeConfig),
+    text: sanitize(reqData.text,sanitizeConfig)
+  }
+
+  try{
+    console.log(req.user.id) // TODO: DEBUG
+    var post = await models.post.create({
+      title: cleanData.title,
+      preview: cleanData.preview,
+      text: cleanData.text,
+      userId: req.user.id
+    })
+    console.log(post)
+    res.redirect('/post/'+post.id)
+  }catch(err){
+    var data = {}
+    data.errors = [{'title':'Неизвестная ошибка','message':''}]
+    data.user = req.user
+    data.page = {'title':'Новый пост'}
+    res.render('post',data)
+  }
+  // await models.user.create({
+  //   name: reqData.name,
+  //   email: reqData.email,
+  //   password: reqData.password
+  // })
+  // if errors:
+  // var data = {}
+  // data.errors = [{'title':'Ошибка','message':'Описание'}]
+  // data.user = req.user
+  // data.page = {'title':'Новый пост'}
+  // res.render('post',data)
 })
 
 app.get('/post/:id', async function(req,res){
