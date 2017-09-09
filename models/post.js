@@ -13,13 +13,12 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       type: DataTypes.DATE
     }
-  }, {
-    classMethods: {
-      associate: function(models) {
-        // associations can be defined here
-        post.belongsTo(models.user)
-      }
-    }
   })
+  post.associate = function(models) {
+    // associations can be defined here
+    console.log('in associate')
+    models.post.belongsTo(models.user)
+    console.log('out asso')
+  }
   return post
 }

@@ -268,6 +268,8 @@ app.post('/post/new', async function(req,res){
 
   try{
     console.log(req.user.id) // TODO: DEBUG
+    console.log('post:', models.post)
+    console.log('user:',models.user)
     var post = await models.post.create({
       title: cleanData.title,
       preview: cleanData.preview,
