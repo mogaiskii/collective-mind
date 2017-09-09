@@ -16,9 +16,7 @@ module.exports = function(sequelize, DataTypes) {
   })
   post.associate = function(models) {
     // associations can be defined here
-    console.log('in associate')
     models.post.belongsTo(models.user)
-    console.log('out asso')
   }
   return post
 }

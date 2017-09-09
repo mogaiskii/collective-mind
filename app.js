@@ -267,18 +267,15 @@ app.post('/post/new', async function(req,res){
   }
 
   try{
-    console.log(req.user.id) // TODO: DEBUG
-    console.log('post:', models.post)
-    console.log('user:',models.user)
     var post = await models.post.create({
       title: cleanData.title,
       preview: cleanData.preview,
       text: cleanData.text,
       userId: req.user.id
     })
-    console.log(post)
     res.redirect('/post/'+post.id)
   }catch(err){
+    console.log(err)
     var data = {}
     data.errors = [{'title':'Неизвестная ошибка','message':''}]
     data.user = req.user
