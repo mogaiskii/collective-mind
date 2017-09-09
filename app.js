@@ -51,9 +51,13 @@ passport.deserializeUser(async function(id, done) {
 
 app.get('/', async function (req,res){
   var data = {}
-  var last_page = 1 //TODO: debug
+  var last_page = Math.ceil( (await models.post.count()) /10 )
   data.user = req.user
-  data.posts = []
+  data.posts = await models.post.findAll({
+    limit:10,
+    order: [['updatedAt', 'DESC']],
+    include:[{model:models.user}]
+  })
   data.page = {'title':'Главная','current':1,'last':last_page}
   res.render('home',data)
   //var last_page = DB.get(count posts) / 10 , +1, if дробь
@@ -65,12 +69,17 @@ app.get('/', async function (req,res){
 
 app.get('/page/:page', async function(req,res){
   var data = {}
-  var last_page = 1 //TODO: debug
+  var last_page = Math.ceil( (await models.post.count()) /10 )
   if ( req.params.page>last_page ){
     res.redirect('/page/'+last_page)
   }
   data.user = req.user
-  data.posts = []
+  data.posts = await models.post.findAll({
+    limit:10,
+    offset:10*(req.params.page-1),
+    order: [['updatedAt', 'DESC']],
+    include:[{model:models.user}],
+  })
   data.page = {'title':'Главная','current':req.params.page,'last':last_page}
   res.render('home',data)
   //var last_page = DB.get(count posts) / 10 , +1, if дробь

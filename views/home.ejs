@@ -6,8 +6,8 @@
 <div class="post">
     <div class="post-header">
         <h3> <%= post.title %> </h3>
-        <p>Опубликовал: <a href="#" class="label label-info"> <%= post.author.name %> </a></p>
-        <p><%= post.date.toLocaleDateString({year:"numeric",month:"numeric",day:"numeric"}) %></p>
+        <p>Опубликовал: <a href="/author/<%= post.user.id %>" class="label label-info"> <%= post.user.name %> </a></p>
+        <p><%= post.updatedAt.toLocaleDateString({year:"numeric",month:"numeric",day:"numeric"}) %></p>
     </div>
     <div class="post-body">
         <div class="preview">
