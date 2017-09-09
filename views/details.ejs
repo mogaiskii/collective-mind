@@ -6,9 +6,9 @@
         <h3> <%= post.title %> </h3>
         <p>
             Опубликовал: <a href="/author/<%= post.user.id %>" class="label label-info"> <%= post.user.name %> </a>
-            <% if( user && user===post.author || user && user.admin ){ %>
+            <% if( user && user.id===post.user.id || user && user.admin ){ %>
             <span class="tools">
-                    <a href="#"><i class="glyphicon glyphicon-pencil"></i></a>
+                    <a href="/post/<%= post.id %>/edit"><i class="glyphicon glyphicon-pencil"></i></a>
                     <a href="#"><i class="glyphicon glyphicon-remove"></i></a>
             </span>
             <% } %>

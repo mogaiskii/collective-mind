@@ -246,16 +246,13 @@ app.get('/post/new', async function(req,res){
   data.errors = []
   data.user = req.user
   data.page = {'title':'Новый пост'}
+  data.fields = {}
   res.render('post',data)
 })
 
 app.post('/post/new', async function(req,res){
   if( !req.isAuthenticated() ) return res.redirect('/auth')
-  //if (!auth) res.redirect('/auth')
-  //else if( all ok) DB(insert into posts (title, preview, text)
-  // values (req.body.title,req.body.preview, req.body.text))
-  // res.redirect('/post/'+id)
-  //else (sth wrong)
+
   var reqData = {
     title: req.body.title,
     preview: req.body.preview,
@@ -289,19 +286,9 @@ app.post('/post/new', async function(req,res){
     data.errors = [{'title':'Неизвестная ошибка','message':''}]
     data.user = req.user
     data.page = {'title':'Новый пост'}
+    data.fields = cleanData
     res.render('post',data)
   }
-  // await models.user.create({
-  //   name: reqData.name,
-  //   email: reqData.email,
-  //   password: reqData.password
-  // })
-  // if errors:
-  // var data = {}
-  // data.errors = [{'title':'Ошибка','message':'Описание'}]
-  // data.user = req.user
-  // data.page = {'title':'Новый пост'}
-  // res.render('post',data)
 })
 
 app.get('/post/:id', async function(req,res){
@@ -315,26 +302,58 @@ app.get('/post/:id', async function(req,res){
 
 app.get('/post/:id/edit', async function(req,res){
   if( !req.isAuthenticated() ) return res.redirect('/auth')
-  //if (!auth) res.redirect('/auth')
+
+  var post = await models.post.findById(req.params.id)
+
   var data = {}
-  data.errors = [{'title':'Ошибка','message':'Описание'}]
+  data.errors = []
   data.user = req.user
-  data.page = {'title':'Редактирование'}
-  res.render('post')
+  data.page = {title:'Редактирование', action:'/post/'+post.id}
+  data.fields = {title:post.title, preview:post.preview, text:post.text}
+  res.render('post',data)
 })
 
-app.put('/post/:id', async function(req,res){
+app.post('/post/:id', async function(req,res){
   if( !req.isAuthenticated() ) return res.redirect('/auth')
-  //if (!auth) res.redirect('/auth')
-  //else if( all ok) DB(insert into posts (title, preview, text)
-  // values (req.body.title,req.body.preview, req.body.text))
-  // res.redirect('/post/'+id)
-  //else (sth wrong)
-  var data = {}
-  data.errors = [{'title':'Ошибка','message':'Описание'}]
-  data.user = req.user
-  data.page = {'title':'Редактирование'}
-  res.render('post',data)
+
+  var post = await models.post.findById(req.params.id)
+
+  var reqData = {
+    title: req.body.title,
+    preview: req.body.preview,
+    text: req.body.text
+  }
+
+  var sanitizeConfig = {
+    allowedTags: ['p','h1','h2','h3','h4','h5','h6','img','b','i','blockquote','pre','a'],
+    allowedAttributes: {
+      'a': ['href'],
+      'img':['alt','src']
+    }
+  }
+  var cleanData = {
+    title: sanitize(reqData.title,sanitizeConfig),
+    preview: sanitize(reqData.preview,sanitizeConfig),
+    text: sanitize(reqData.text,sanitizeConfig)
+  }
+
+  try{
+    await post.update({
+      title: cleanData.title,
+      preview: cleanData.preview,
+      text: cleanData.text,
+    })
+    res.redirect('/post/'+post.id)
+  }catch(err){
+    console.log(err)
+    var data = {}
+    data.errors = [{'title':'Неизвестная ошибка','message':''}]
+    data.user = req.user
+    data.page = {'title':'Новый пост', action:'/post/'+post.id}
+    data.fields = cleanData
+    res.render('post',data)
+  }
+
 })
 
 app.get('/author/:id', async function(req,res){
