@@ -5,14 +5,14 @@
     <div class="post-header">
         <h3> <%= post.title %> </h3>
         <p>
-            Опубликовал: <a href="/author/<%= post.author.id %>" class="label label-info"> <%= post.author.name %> </a>
+            Опубликовал: <a href="/author/<%= post.user.id %>" class="label label-info"> <%= post.user.name %> </a>
             <% if( user && user===post.author || user && user.admin ){ %>
             <span class="tools">
                     <a href="#"><i class="glyphicon glyphicon-pencil"></i></a>
                     <a href="#"><i class="glyphicon glyphicon-remove"></i></a>
             </span>
             <% } %>
-            <p><%= post.date.getDate()+' '+(post.date.getMonth()-0+1)+' '+post.date.getFullYear() %></p>
+            <p><%= post.updatedAt.getDate()+' '+(post.updatedAt.getMonth()-0+1)+' '+post.updatedAt.getFullYear() %></p>
         </p>
     </div>
     <div class="post-body">

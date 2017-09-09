@@ -299,9 +299,7 @@ app.get('/post/:id', async function(req,res){
   //var post = DB(select * from posts where id= req.params.id)
   var data = {}
   data.user = req.user
-  var date = new Date() //TODO: debug . from timestamp
-  data.post = {'title':'Заголовок', 'preview':'Описание','text':'Текст поста','date':date,'author':
-    {'id':1,'name':'Автор'}}//TODO:debug
+  data.post = await models.post.findById(req.params.id,{include:[models.user]})
   data.page = {'title':data.post.title}
   res.render('details',data)
 })
@@ -335,8 +333,8 @@ app.get('/author/:id', async function(req,res){
   //var posts = DB(select * from posts where author = user)
   var data = {}
   data.user = req.user
-  data.pageUser = {'name':'user'}
-  data.posts = [{'id':1,'title':'Заголовок','preview':'Описание'}]
+  data.pageUser = await models.user.findById( req.params.id,
+    {include:[{model:models.post, as:'posts'}]} )
   data.page = {'title':'Вход'}
   res.render('author',data)
   // {"page":{"title":user.name}, "user":user, "posts":posts}
