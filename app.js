@@ -367,6 +367,19 @@ app.post('/post/:id', async function(req,res){
 
 })
 
+app.get('/post/:id/delete', async function(req,res){
+  if( !req.isAuthenticated() ) return res.redirect('/auth')
+
+  var post = await models.post.findById(req.params.id)
+
+  if( req.user.id != post.userId && !req.user.isAdmin ){
+    return res.redirect('/post/'+req.params.id)
+  }
+  await post.destroy()
+  
+  res.redirect('/')
+})
+
 app.get('/author/:id', async function(req,res){
   //var user = DB(select * from users where id= req.params.id)
   //var posts = DB(select * from posts where author = user)
