@@ -51,7 +51,7 @@ passport.deserializeUser(async function(id, done) {
 
 app.get('/', async function (req,res){
   var data = {}
-  var last_page = Math.ceil( (await models.post.count()) /10 )
+  var last_page = Math.ceil( (await models.post.count()) /10 ) || 1
   data.user = req.user
   data.posts = await models.post.findAll({
     limit:10,
