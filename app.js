@@ -71,7 +71,7 @@ app.get('/page/:page', async function(req,res){
   var data = {}
   var last_page = Math.ceil( (await models.post.count()) /10 )
   if ( req.params.page>last_page ){
-    res.redirect('/page/'+last_page)
+    return res.redirect('/page/'+last_page)
   }
   data.user = req.user
   data.posts = await models.post.findAll({
@@ -100,7 +100,7 @@ app.get('/register', async function(req,res){
   res.render('register', data)
 })
 
-app.post('/register', async function(req,res){
+app.post('/register', async function(req,res,next){
   //if (authorised) res.redirect('/')
   if( req.isAuthenticated() ) return res.redirect('/')
 
@@ -171,13 +171,20 @@ app.post('/register', async function(req,res){
     //trying make model instance
     try {
       //make new user model instance
-      await models.user.create({
+      var user = await models.user.create({
         name: reqData.name,
         email: reqData.email,
         password: reqData.password
       })
 
-      res.redirect('/')
+      req.login(user, function(err){
+        // if server error
+        if(err) return next(err)
+        // ok -> redirect
+        return res.redirect('/')
+      })
+      //
+      // res.redirect('/')
     }catch(err){
       console.log(err)
       let data = {}
@@ -304,6 +311,10 @@ app.get('/post/:id/edit', async function(req,res){
   if( !req.isAuthenticated() ) return res.redirect('/auth')
 
   var post = await models.post.findById(req.params.id)
+
+  if( req.user.id != post.userId && !req.user.isAdmin ){
+    return res.redirect('/post/'+req.params.id)
+  }
 
   var data = {}
   data.errors = []
