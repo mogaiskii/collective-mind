@@ -69,7 +69,7 @@ app.get('/', async function (req,res){
 
 app.get('/page/:page', async function(req,res){
   var data = {}
-  var last_page = Math.ceil( (await models.post.count()) /10 )
+  var last_page = Math.ceil( (await models.post.count()) /10 ) || 1
   if ( req.params.page>last_page ){
     return res.redirect('/page/'+last_page)
   }
